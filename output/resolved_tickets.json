@@ -35,11 +35,12 @@
         "created_at": "2026-08-31T09:15:00-04:00"
       },
       "run": {
-        "run_id": "263b9e6b-0132-4ee1-ba60-e0327dd57c8b",
-        "started_at": "2026-10-12T18:32:44.714989Z",
+        "run_id": "0d348d68-ef27-4db2-a071-16bd31ffb6e0",
+        "started_at": "2026-10-12T19:11:03.937897Z",
         "mode": "local_mock",
         "model": "gpt-6-luna",
-        "status": "completed"
+        "status": "completed",
+        "reset_from_clean_database": true
       },
       "workflow_status": "resolved",
       "outcome": {
@@ -67,39 +68,49 @@
         {
           "role": "boss",
           "completed": true,
-          "steps": 8,
+          "steps": 9,
           "usage": {
             "requests": 7,
             "tool_calls": 4,
-            "input_tokens": 848,
+            "input_tokens": 791,
             "output_tokens": 365
-          }
+          },
+          "tool_names": [
+            "consult_specialist"
+          ]
         },
         {
           "role": "inventory",
           "completed": true,
-          "steps": 6,
+          "steps": 7,
           "usage": {
             "requests": 3,
             "tool_calls": 1,
-            "input_tokens": 233,
+            "input_tokens": 214,
             "output_tokens": 100
-          }
+          },
+          "tool_names": [
+            "lookup_inventory"
+          ]
         },
         {
           "role": "accounting",
           "completed": true,
-          "steps": 6,
+          "steps": 7,
           "usage": {
             "requests": 6,
             "tool_calls": 3,
-            "input_tokens": 607,
+            "input_tokens": 569,
             "output_tokens": 222
-          }
+          },
+          "tool_names": [
+            "resolve_ticket_101_bulldog_tee"
+          ]
         }
       ],
       "approvals": [],
-      "cash_change": 0.0
+      "cash_change": 0.0,
+      "tool_audit_note": "Tool names and concise run summaries were captured in append-only audit_trail.json for this clean-reset run."
     },
     {
       "ticket_id": 102,
@@ -118,11 +129,12 @@
         "created_at": "2026-08-31T11:05:00-04:00"
       },
       "run": {
-        "run_id": "71cdfef8-117c-4684-baff-6ad0b646a216",
-        "started_at": "2026-10-12T18:32:44.963262Z",
+        "run_id": "b4a54c70-f185-4526-8e70-678387cb2f2e",
+        "started_at": "2026-10-12T19:11:04.186695Z",
         "mode": "local_mock",
         "model": "gpt-6-luna",
-        "status": "completed"
+        "status": "completed",
+        "reset_from_clean_database": true
       },
       "workflow_status": "resolved",
       "outcome": {
@@ -150,39 +162,49 @@
         {
           "role": "boss",
           "completed": true,
-          "steps": 8,
+          "steps": 9,
           "usage": {
             "requests": 7,
             "tool_calls": 4,
-            "input_tokens": 940,
+            "input_tokens": 883,
             "output_tokens": 367
-          }
+          },
+          "tool_names": [
+            "consult_specialist"
+          ]
         },
         {
           "role": "facilities",
           "completed": true,
-          "steps": 6,
+          "steps": 7,
           "usage": {
             "requests": 3,
             "tool_calls": 1,
-            "input_tokens": 302,
+            "input_tokens": 283,
             "output_tokens": 104
-          }
+          },
+          "tool_names": [
+            "resolve_ticket_102_rent_notice"
+          ]
         },
         {
           "role": "accounting",
           "completed": true,
-          "steps": 6,
+          "steps": 7,
           "usage": {
             "requests": 6,
             "tool_calls": 3,
-            "input_tokens": 686,
+            "input_tokens": 648,
             "output_tokens": 225
-          }
+          },
+          "tool_names": [
+            "resolve_ticket_102_rent_notice"
+          ]
         }
       ],
       "approvals": [],
-      "cash_change": 0.0
+      "cash_change": 0.0,
+      "tool_audit_note": "Tool names and concise run summaries were captured in append-only audit_trail.json for this clean-reset run."
     },
     {
       "ticket_id": 103,
@@ -201,11 +223,12 @@
         "created_at": "2026-08-31T16:55:00-04:00"
       },
       "run": {
-        "run_id": "4a8c3ac9-a87a-45e8-b553-00ec4788d87f",
-        "started_at": "2026-10-12T18:32:45.216444Z",
+        "run_id": "24682755-a53f-4e07-8327-4e2151f5ed30",
+        "started_at": "2026-10-12T19:11:04.424942Z",
         "mode": "local_mock",
         "model": "gpt-6-luna",
-        "status": "completed"
+        "status": "completed",
+        "reset_from_clean_database": true
       },
       "workflow_status": "resolved",
       "outcome": {
@@ -237,50 +260,63 @@
         {
           "role": "boss",
           "completed": true,
-          "steps": 10,
+          "steps": 11,
           "usage": {
             "requests": 10,
             "tool_calls": 6,
-            "input_tokens": 1386,
+            "input_tokens": 1310,
             "output_tokens": 539
-          }
+          },
+          "tool_names": [
+            "consult_specialist"
+          ]
         },
         {
           "role": "inventory",
           "completed": true,
-          "steps": 6,
+          "steps": 7,
           "usage": {
             "requests": 3,
             "tool_calls": 1,
-            "input_tokens": 234,
+            "input_tokens": 215,
             "output_tokens": 100
-          }
+          },
+          "tool_names": [
+            "lookup_inventory"
+          ]
         },
         {
           "role": "accounting",
           "completed": true,
-          "steps": 6,
+          "steps": 7,
           "usage": {
             "requests": 6,
             "tool_calls": 3,
-            "input_tokens": 601,
+            "input_tokens": 563,
             "output_tokens": 226
-          }
+          },
+          "tool_names": [
+            "resolve_ticket_103_bulk_hoodie_request"
+          ]
         },
         {
           "role": "customer_service",
           "completed": true,
-          "steps": 6,
+          "steps": 7,
           "usage": {
             "requests": 9,
             "tool_calls": 5,
-            "input_tokens": 1054,
+            "input_tokens": 997,
             "output_tokens": 374
-          }
+          },
+          "tool_names": [
+            "get_customer_order_context"
+          ]
         }
       ],
       "approvals": [],
-      "cash_change": 0.0
+      "cash_change": 0.0,
+      "tool_audit_note": "Tool names and concise run summaries were captured in append-only audit_trail.json for this clean-reset run."
     }
   ],
   "approvals": [],
@@ -323,8 +359,184 @@
   "ending_checking_balance": 3400.0,
   "ending_balance_source": "cash_accounts.balance",
   "notes": [
-    "All three agent workflows completed and the database ticket statuses are resolved.",
-    "Agent completion does not itself fulfill the tee order, pay rent, replenish hoodies, or approve a discount. No payment/purchase was submitted because agent results require human approval.",
-    "The audit trail is append-only and contains the three run IDs and per-agent graph events."
-  ]
+    "The working database was reset from the clean original before the corrective runs; all three agent workflows completed and database ticket statuses are resolved.",
+    "The corrected audit records include actual tool/delegation names and concise agent completion summaries for each graph run.",
+    "No payment or purchase was approved or recorded. Ticket 101 fulfillment, rent payment, and ticket 103 discount/replenishment remain subject to explicit human decisions.",
+    "Starting and ending checking balances are both $3,400.00 and match cash_accounts; the payments table remains empty."
+  ],
+  "starting_balance_date": "2026-08-31",
+  "ending_balance_date": "2026-08-31",
+  "post_correction_clean_reset_run": {
+    "run_order": [
+      101,
+      102,
+      103
+    ],
+    "agent_run_ids": [
+      {
+        "ticket_id": 101,
+        "run_id": "0d348d68-ef27-4db2-a071-16bd31ffb6e0",
+        "agents": [
+          {
+            "role": "boss",
+            "completed": true,
+            "steps": 9,
+            "usage": {
+              "requests": 7,
+              "tool_calls": 4,
+              "input_tokens": 791,
+              "output_tokens": 365
+            },
+            "tool_names": [
+              "consult_specialist"
+            ]
+          },
+          {
+            "role": "inventory",
+            "completed": true,
+            "steps": 7,
+            "usage": {
+              "requests": 3,
+              "tool_calls": 1,
+              "input_tokens": 214,
+              "output_tokens": 100
+            },
+            "tool_names": [
+              "lookup_inventory"
+            ]
+          },
+          {
+            "role": "accounting",
+            "completed": true,
+            "steps": 7,
+            "usage": {
+              "requests": 6,
+              "tool_calls": 3,
+              "input_tokens": 569,
+              "output_tokens": 222
+            },
+            "tool_names": [
+              "resolve_ticket_101_bulldog_tee"
+            ]
+          }
+        ]
+      },
+      {
+        "ticket_id": 102,
+        "run_id": "b4a54c70-f185-4526-8e70-678387cb2f2e",
+        "agents": [
+          {
+            "role": "boss",
+            "completed": true,
+            "steps": 9,
+            "usage": {
+              "requests": 7,
+              "tool_calls": 4,
+              "input_tokens": 883,
+              "output_tokens": 367
+            },
+            "tool_names": [
+              "consult_specialist"
+            ]
+          },
+          {
+            "role": "facilities",
+            "completed": true,
+            "steps": 7,
+            "usage": {
+              "requests": 3,
+              "tool_calls": 1,
+              "input_tokens": 283,
+              "output_tokens": 104
+            },
+            "tool_names": [
+              "resolve_ticket_102_rent_notice"
+            ]
+          },
+          {
+            "role": "accounting",
+            "completed": true,
+            "steps": 7,
+            "usage": {
+              "requests": 6,
+              "tool_calls": 3,
+              "input_tokens": 648,
+              "output_tokens": 225
+            },
+            "tool_names": [
+              "resolve_ticket_102_rent_notice"
+            ]
+          }
+        ]
+      },
+      {
+        "ticket_id": 103,
+        "run_id": "24682755-a53f-4e07-8327-4e2151f5ed30",
+        "agents": [
+          {
+            "role": "boss",
+            "completed": true,
+            "steps": 11,
+            "usage": {
+              "requests": 10,
+              "tool_calls": 6,
+              "input_tokens": 1310,
+              "output_tokens": 539
+            },
+            "tool_names": [
+              "consult_specialist"
+            ]
+          },
+          {
+            "role": "inventory",
+            "completed": true,
+            "steps": 7,
+            "usage": {
+              "requests": 3,
+              "tool_calls": 1,
+              "input_tokens": 215,
+              "output_tokens": 100
+            },
+            "tool_names": [
+              "lookup_inventory"
+            ]
+          },
+          {
+            "role": "accounting",
+            "completed": true,
+            "steps": 7,
+            "usage": {
+              "requests": 6,
+              "tool_calls": 3,
+              "input_tokens": 563,
+              "output_tokens": 226
+            },
+            "tool_names": [
+              "resolve_ticket_103_bulk_hoodie_request"
+            ]
+          },
+          {
+            "role": "customer_service",
+            "completed": true,
+            "steps": 7,
+            "usage": {
+              "requests": 9,
+              "tool_calls": 5,
+              "input_tokens": 997,
+              "output_tokens": 374
+            },
+            "tool_names": [
+              "get_customer_order_context"
+            ]
+          }
+        ]
+      }
+    ],
+    "mode": "local_mock",
+    "starting_checking_balance": 3400.0,
+    "ending_checking_balance": 3400.0,
+    "approvals_recorded": 0,
+    "cash_changed": false,
+    "note": "This corrective run reset the working database from the starter file. It verifies tool-level audit records and does not imply operational fulfillment or human approval."
+  }
 }

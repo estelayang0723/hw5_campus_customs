@@ -21,7 +21,7 @@ npm install
 cd ..
 ```
 
-The frontend's `frontend/.npmrc` configures the npm mirror used for this project. The Python dependencies include FastAPI/Uvicorn, PydanticAI, and the MCP SDK/FastMCP server requirements. The `.venv/`, `node_modules/`, npm cache, build output, Python caches, `.env`, and macOS `.DS_Store` files are excluded by `.gitignore`.
+The frontend's `frontend/.npmrc` configures the npm mirror used for this project. The Python dependencies include FastAPI/Uvicorn, PydanticAI, and the MCP SDK/FastMCP server requirements. The equivalent one-line Python install is `.venv/bin/python -m pip install -r requirements.txt`. Use `.env.example` as a template only if you explicitly enable Portkey mode; keep the real `.env` local and untracked. The `.venv/`, `node_modules/`, npm cache, build output, Python caches, `.env`, and macOS `.DS_Store` files are excluded by `.gitignore`.
 
 ## Database files and reset
 
@@ -67,7 +67,7 @@ CAMPUS_CUSTOMS_LOCAL_MOCK=1 .venv/bin/python -m backend.runner \
   --ticket-id 101
 ```
 
-The five agents are Boss, Inventory, Accounting, Facilities, and Customer Service. Graph-step metadata is appended to `output/audit_trail.json` and is not cleared by database reset.
+The five agents are Boss, Inventory, Accounting, Facilities, and Customer Service. Any role may delegate to any other role; a five-agent depth limit and shared usage caps bound delegation loops. Graph-step metadata, tool names, and concise completion summaries are appended to `output/audit_trail.json` and are not cleared by database reset.
 
 ### Optional Portkey mode
 
@@ -98,7 +98,7 @@ Design notes are in `output/design.md`; the ticket planning, actuals, cash ledge
 | `GET /tickets` | Return tickets 101–103 and current status. |
 | `POST /tickets/{ticket_id}/run` | Run the selected ticket and return its structured result. |
 | `POST /tickets/{ticket_id}/run/stream` | Stream agent graph events; mark the workflow resolved after successful completion. |
-| `GET /events?limit=50` | Return recent append-only agent audit records. |
+| `GET /events?limit=50` | Return recent append-only agent events with called tool/delegation names and concise completion summaries. |
 | `GET /cash/checking` | Return checking balance and snapshot date. |
 | `POST /approvals` | Record a human-confirmed payment or purchase and debit checking. |
 | `POST /reset` | Restore the working database from the clean starter database. |

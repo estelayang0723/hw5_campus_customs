@@ -46,6 +46,7 @@ class TeamDeps:
     run_id: UUID
     agents: dict[AgentRole, Agent[Any, AgentReply]]
     ticket_id: TicketId | None = None
+    delegation_path: tuple[AgentRole, ...] = (AgentRole.BOSS,)
 
 
 @dataclass(slots=True)
@@ -82,6 +83,52 @@ def build_team(toolset: MCPToolset) -> AgentTeam:
             retries=1,
         )
 
+    async def delegate_to_specialist(
+        ctx: RunContext[TeamDeps],
+        caller_role: AgentRole,
+        role: AgentRole,
+        task: Annotated[str, Field(min_length=1, max_length=4_000)],
+        ticket_id: TicketId | None = None,
+    ) -> str:
+        """Delegate a focused evidence-gathering task with a strict depth cap."""
+        if role == caller_role:
+            raise ValueError("An agent cannot delegate to itself.")
+        if len(ctx.deps.delegation_path) >= len(AgentRole):
+            raise ValueError("Maximum delegation depth reached.")
+        specialist_deps = TeamDeps(
+            run_id=ctx.deps.run_id,
+            agents=ctx.deps.agents,
+            ticket_id=ticket_id if ticket_id is not None else ctx.deps.ticket_id,
+            delegation_path=(*ctx.deps.delegation_path, role),
+        )
+        reply = await run_agent_loop(
+            ctx.deps.agents[role],
+            role,
+            task,
+            specialist_deps,
+            ticket_id=specialist_deps.ticket_id,
+            usage=ctx.usage,
+        )
+        return reply.model_dump_json()
+
+    def attach_delegation_tool(caller_role: AgentRole, specialist: Agent[TeamDeps, AgentReply]) -> None:
+        async def consult_specialist(
+            ctx: RunContext[TeamDeps],
+            role: AgentRole,
+            task: Annotated[str, Field(min_length=1, max_length=4_000)],
+            ticket_id: TicketId | None = None,
+        ) -> str:
+            """Ask another available role to gather focused evidence."""
+            if not isinstance(role, AgentRole):
+                raise ValueError("Choose a valid Campus Customs agent role.")
+            return await delegate_to_specialist(ctx, caller_role, role, task, ticket_id)
+
+        consult_specialist.__name__ = "consult_specialist"
+        specialist.tool(consult_specialist)
+
+    for caller_role, specialist in specialists.items():
+        attach_delegation_tool(caller_role, specialist)
+
     boss_prompt = (PROMPT_DIR / "boss.md").read_text(encoding="utf-8")
     boss: Agent[TeamDeps, AgentReply] = Agent(
         model,
@@ -104,20 +151,7 @@ def build_team(toolset: MCPToolset) -> AgentTeam:
         """Delegate a focused evidence-gathering task to one specialist agent."""
         if role not in SPECIALIST_ROLES:
             raise ValueError("Boss can delegate only to inventory, accounting, facilities, or customer_service.")
-        specialist_deps = TeamDeps(
-            run_id=ctx.deps.run_id,
-            agents=ctx.deps.agents,
-            ticket_id=ticket_id if ticket_id is not None else ctx.deps.ticket_id,
-        )
-        reply = await run_agent_loop(
-            ctx.deps.agents[role],
-            role,
-            task,
-            specialist_deps,
-            ticket_id=specialist_deps.ticket_id,
-            usage=ctx.usage,
-        )
-        return reply.model_dump_json()
+        return await delegate_to_specialist(ctx, AgentRole.BOSS, role, task, ticket_id)
 
     return AgentTeam(boss=boss, specialists=specialists, toolset=toolset)
 
@@ -157,15 +191,6 @@ async def run_agent_loop(
         ) as agent_run:
             async for node in agent_run:
                 step += 1
-                append_audit_record(AuditRecord(
-                    run_id=deps.run_id,
-                    agent_run_id=agent_run_id,
-                    agent_role=role,
-                    step=step,
-                    event="graph_step",
-                    node_type=type(node).__name__,
-                    ticket_id=ticket_id,
-                ))
                 node_type = type(node).__name__
                 model_response = getattr(node, "model_response", None)
                 tool_names = [
@@ -174,7 +199,18 @@ async def run_agent_loop(
                     if getattr(part, "part_kind", None) == "tool-call"
                     and getattr(part, "tool_name", None)
                     and not str(getattr(part, "tool_name")).startswith("__pydantic_ai_")
+                    and str(getattr(part, "tool_name")) != "final_result"
                 ]
+                append_audit_record(AuditRecord(
+                    run_id=deps.run_id,
+                    agent_run_id=agent_run_id,
+                    agent_role=role,
+                    step=step,
+                    event="graph_step",
+                    node_type=node_type,
+                    tool_names=tool_names,
+                    ticket_id=ticket_id,
+                ))
                 await publish_live_event(deps.run_id, {
                     "type": "agent_action",
                     "agent_role": role.value,
@@ -202,6 +238,7 @@ async def run_agent_loop(
             event="run_completed",
             ticket_id=ticket_id,
             usage=usage_summary,
+            message=result.output.summary[:500],
         ))
         await publish_live_event(deps.run_id, {
             "type": "agent_completed",

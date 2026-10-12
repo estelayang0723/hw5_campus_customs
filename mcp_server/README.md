@@ -64,7 +64,7 @@ Install the full requirements above, then start the local FastAPI app without ma
 CAMPUS_CUSTOMS_LOCAL_MOCK=1 .venv/bin/uvicorn backend.main:app --host 127.0.0.1 --port 8000
 ```
 
-The interactive API docs are at `http://127.0.0.1:8000/docs`. The app provides `GET /tickets`, `POST /tickets/{ticket_id}/run`, `GET /events?limit=50`, `POST /approvals`, `GET /cash/checking`, and `POST /reset`. Cash approvals require the request fields `confirm: true` and `approved_by`; configure `CAMPUS_CUSTOMS_APPROVAL_TOKEN` to also require an `X-Approval-Token` header. Keep the server bound to localhost unless authentication is configured. Reset restores `data/campus_customs_new.db` from `data/campus_customs.db` and leaves the separate audit log intact.
+The interactive API docs are at `http://127.0.0.1:8000/docs`. The app provides `GET /tickets`, `POST /tickets/{ticket_id}/run`, `GET /events?limit=50`, `POST /approvals`, `GET /cash/checking`, and `POST /reset`. Recent events include called MCP/delegation tool names and concise completion summaries. Cash approvals require the request fields `confirm: true` and `approved_by`; configure `CAMPUS_CUSTOMS_APPROVAL_TOKEN` to also require an `X-Approval-Token` header. Keep the server bound to localhost unless authentication is configured. Reset restores `data/campus_customs_new.db` from `data/campus_customs.db` and leaves the separate audit log intact.
 
 ## Vite frontend
 

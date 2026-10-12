@@ -223,6 +223,11 @@ def recent_agent_events(
     if not isinstance(records, list):
         raise HTTPException(status_code=500, detail="The agent event log must be a JSON array.")
     latest = list(reversed(records[-limit:]))
+    # Older audit rows may contain PydanticAI's structured-output helper name;
+    # keep the endpoint focused on callable agent/MCP tools.
+    for record in latest:
+        if isinstance(record, dict) and isinstance(record.get("tool_names"), list):
+            record["tool_names"] = [name for name in record["tool_names"] if name != "final_result"]
     return {"events": latest, "count": len(latest)}
 
 

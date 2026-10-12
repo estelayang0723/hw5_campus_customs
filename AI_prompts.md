@@ -1,5 +1,14 @@
 # HW5 — AI Prompts
 
+## Problem 1: Vibe coder prompts
+
+help me create an AI_prompts.md file for our AI HW5 assignment so we can keep track of all our prompts as we build the campus customs multi-agent shop
+
+### Progress log
+
+- Created this prompt log at the beginning of the assignment and kept the subsequent problem prompts and progress notes here.
+
+
 ## Problem 2 — Campus Customs database harness
 
 ### User prompt
@@ -186,3 +195,18 @@
 - Initial repository inspection found no local `.git` metadata; initialized a local repository, added the requested GitHub URL as `origin`, and staged the project while excluding `.env`, caches, virtual environments, and build output.
 - Verified `.env` is ignored and absent from the remote tree; verified `data/campus_customs.db` and `data/campus_customs_new.db` are both committed. The URL, root README, and Problem 11 log are present in `main`.
 - Committed and pushed the submission to the public repository's `main` branch; remote HEAD is commit `a988e85` (submission commit).
+
+
+## Post-submission corrections
+
+### User prompt
+
+> 帮我修正，修正后更新我的github
+
+### Progress log
+
+- Restored the complete per-problem prompt and progress sections while preserving the original Problem 1 prompt supplied by the user.
+- Added `tool_names` and a concise agent completion summary to new append-only audit records; `GET /events` now returns these fields, and the dashboard displays tool names from recent audit events. Older audit entries remain intact.
+- Added delegation from every agent role to any other role through `consult_specialist`; a five-agent depth limit and shared PydanticAI usage limits bound loops.
+- Added root `requirements.txt` and a secret-free `.env.example`, and updated the setup documentation.
+- Reset the working database from the original and reran all three ticket workflows in local mock mode; the final run IDs in the Problem 9 artifacts point to these runs, whose audit records contain agent tool/delegation names and completion summaries. No Portkey calls or cash approvals were made. The artifacts distinguish completed review workflows from pending real-world payment, replenishment, customer, and discount decisions.

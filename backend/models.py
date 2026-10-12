@@ -59,6 +59,8 @@ class AuditRecord(BaseModel):
     event: Literal["run_started", "graph_step", "run_completed", "run_failed"]
     node_type: str | None = None
     tool_name: str | None = None
+    tool_names: list[str] = Field(default_factory=list)
+    message: str | None = Field(default=None, max_length=500)
     ticket_id: TicketId | None = None
     usage: dict[str, int] | None = None
     error_type: str | None = None

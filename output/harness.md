@@ -150,7 +150,7 @@ The read-only FastMCP server is implemented in `mcp_server/server.py` and connec
 
 ### Agents
 
-All five PydanticAI agents connect to the same local, read-only MCP server, with role-filtered specialist tool access, and use the single configured model `gpt-6-luna` through Portkey. The Boss can call the four specialist agents with its `consult_specialist` orchestration tool; this is an internal PydanticAI tool, not an MCP database tool.
+All five PydanticAI agents connect to the same local, read-only MCP server, with role-filtered specialist tool access, and use the single configured model `gpt-6-luna` through Portkey. Boss and every specialist expose the internal PydanticAI `consult_specialist` orchestration tool to delegate to another role; it is separate from the MCP database tools.
 
 | Agent | Prompt file | Role |
 | --- | --- | --- |
@@ -162,7 +162,7 @@ All five PydanticAI agents connect to the same local, read-only MCP server, with
 
 ### MCP tools and source tables
 
-All five agents connect to the same MCP server; Boss has all tools, and specialists receive role-filtered tool surfaces. The database tools provide no write operations.
+All five agents connect to the same MCP server; Boss has all tools, and specialists receive role-filtered tool surfaces. Every role can delegate to any other role through `consult_specialist`; delegation is bounded by a five-agent depth cap and the shared workflow usage limits. The database tools provide no write operations.
 
 | MCP tool | Tables read | Available roles | Purpose |
 | --- | --- | --- |
@@ -180,7 +180,7 @@ All five agents connect to the same MCP server; Boss has all tools, and speciali
 
 - **Customer guardrails:** Use only database evidence; do not expose another customer's data or internal unit costs/account balances. Customer Service is technically filtered to customer-safe order context and inventory, excluding invoice, payment, and cash tools. No agent may send messages or promise stock, delivery dates, substitutions, or discounts.
 - **Money guardrails:** MCP tools are read-only; never authorize or initiate payments, refunds, transfers, discounts, or record changes. Treat payment rows as unlinked to invoices/leases unless a human reconciles their references; escalate money and policy decisions for explicit approval.
-- **Loop/token guardrails:** Inputs are capped at 4,000 characters; each shared workflow is limited to 10 model requests, 12 successful tool calls, 8,000 input tokens, 4,000 output tokens, and 12,000 total tokens. Boss delegates specialists with the same usage counter, and each graph node is appended to `output/audit_trail.json` without logging prompt or response contents.
+- **Loop/token guardrails:** Inputs are capped at 4,000 characters; each shared workflow is limited to 10 model requests, 12 successful tool calls, 8,000 input tokens, 4,000 output tokens, and 12,000 total tokens. All delegations share the same usage counter and stop at the five-agent depth limit. Each graph step appends its tool names to `output/audit_trail.json`; completed agent summaries are recorded without storing prompts or full replies.
 - **Local mock mode:** `CAMPUS_CUSTOMS_LOCAL_MOCK` defaults to enabled. PydanticAI's local `FunctionModel` selects an available MCP tool, reads its live result from `data/campus_customs_new.db`, and formats a validated response without network calls or token use. Set `CAMPUS_CUSTOMS_LOCAL_MOCK=0` plus `PORTKEY_API_KEY` to run the preserved `gpt-6-luna` Portkey configuration.
 
 ## Problem 7 — FastAPI backend routes
@@ -190,7 +190,7 @@ All five agents connect to the same MCP server; Boss has all tools, and speciali
 | `GET /tickets` | Returns tickets 101, 102, and 103 with their current status and summary fields. |
 | `POST /tickets/{ticket_id}/run/stream` | Runs the selected ticket's team and streams agent actions/dialogue as server-sent events, then marks it resolved on success. |
 | `POST /tickets/{ticket_id}/run` | Runs the Boss PydanticAI workflow for the specified seeded ticket and returns its structured result. |
-| `GET /events?limit=50` | Returns recent append-only agent audit events newest first for dashboard refreshes. |
+| `GET /events?limit=50` | Returns recent append-only agent events newest first, including agent role, ticket, graph node, called tool/delegation names, usage, and the concise completion summary. |
 | `POST /approvals` | Requires `confirm: true` and `approved_by`, then records a payment or purchase and atomically debits the selected cash account. |
 | `GET /cash/checking` | Returns the recorded checking balance and snapshot date. |
 | `POST /reset` | Requires `confirm: true` and restores `campus_customs_new.db` from original `campus_customs.db`. |
@@ -203,13 +203,13 @@ The dashboard is a React + TypeScript application built with Vite in `frontend/`
 
 ## Problem 9 — Actual ticket runs and cash reconciliation
 
-The working database was reset from `data/campus_customs.db` before the three local-mock PydanticAI runs. The starting checking balance was **$3,400.00** dated `2026-08-31`. Tickets 101, 102, and 103 each completed with backend workflow status `resolved`; their run IDs and per-agent graph events were appended to `output/audit_trail.json` and outcomes are recorded in `output/resolved_tickets.json`.
+The working database was reset from `data/campus_customs.db` before the corrected three-ticket local-mock PydanticAI run. The starting checking balance was **$3,400.00** dated `2026-08-31`. Tickets 101, 102, and 103 each completed with backend workflow status `resolved`; their final run IDs and per-agent graph events, tool names, and concise completion summaries were appended to `output/audit_trail.json` and outcomes are recorded in `output/resolved_tickets.json`.
 
-| Ticket | Agent contributions | Evidence-grounded outcome | Cash change | Human approval |
+| Ticket | Agent contributions and tools recorded | Evidence-grounded outcome | Cash change | Human approval |
 | --- | --- | --- | ---: | --- |
-| 101 | Boss, Inventory, Accounting | 0 size-S tees; linked invoice 501 is $840, open and overdue; reprint vendor lead time is 5 days. Customer fulfillment still needs human/vendor follow-up. | $0.00 | None recorded; no stock commitment or invoice payment submitted. |
-| 102 | Boss, Facilities, Accounting | Lease 1 records $2,400 rent due 2026-09-02; checking snapshot is $3,400; no payment row exists. | $0.00 | No rent payment approval recorded. |
-| 103 | Boss, Inventory, Accounting, Customer Service | 8 of 20 requested size-M hoodies are in stock; list price is $58; no discount rule is stored. | $0.00 | No discount or purchase approval recorded. |
+| 101 | Boss (`consult_specialist`), Inventory (`lookup_inventory`), Accounting (`resolve_ticket_101_bulldog_tee`) | 0 size-S tees; linked invoice 501 is $840, open and overdue; reprint vendor lead time is 5 days. Customer fulfillment still needs human/vendor follow-up. | $0.00 | None recorded; no stock commitment or invoice payment submitted. |
+| 102 | Boss (`consult_specialist`), Facilities and Accounting (`resolve_ticket_102_rent_notice`) | Lease 1 records $2,400 rent due 2026-09-02; checking snapshot is $3,400; no payment row exists. | $0.00 | No rent payment approval recorded. |
+| 103 | Boss (`consult_specialist`), Inventory (`lookup_inventory`), Accounting (`resolve_ticket_103_bulk_hoodie_request`), Customer Service (`get_customer_order_context`) | 8 of 20 requested size-M hoodies are in stock; list price is $58; no discount rule is stored. | $0.00 | No discount or purchase approval recorded. |
 
 Ending checking remains **$3,400.00**, matching `cash_accounts.balance`, and `payments` remains empty. The agent workflow status is resolved for all three tickets, while business fulfillment/payment/discount decisions requiring human approval remain outstanding. See the Cash tab in `output/desk_tickets.html` and the ticket board in `output/resolved_board.html` for the same per-ticket cash reconciliation.
 
