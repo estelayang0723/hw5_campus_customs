@@ -183,4 +183,6 @@
 - Saved the exact public repository URL in `output/github_url.txt`.
 - Confirmed `.env` is ignored and added `.DS_Store` to the ignore rules; database files are not excluded.
 - Added a root README covering Python/npm setup, clean database reset, MCP stdio server, local/mock agent run, FastAPI backend, optional Portkey configuration, frontend launch/build, routes, and safety notes.
-- Initial repository inspection found no local `.git` metadata; initialized a local repository, added the requested GitHub URL as `origin`, and prepared to verify the staged file set before submission.
+- Initial repository inspection found no local `.git` metadata; initialized a local repository, added the requested GitHub URL as `origin`, and staged the project while excluding `.env`, caches, virtual environments, and build output.
+- Verified `.env` is ignored and absent from the remote tree; verified `data/campus_customs.db` and `data/campus_customs_new.db` are both committed. The URL, root README, and Problem 11 log are present in `main`.
+- Committed and pushed the submission to the public repository's `main` branch; remote HEAD is commit `a988e85` (submission commit).
