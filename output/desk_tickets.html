@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#173c35">
+  <title>Campus Customs · Problem 6 Desk Plan</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #18352f;
+      --muted: #62746e;
+      --paper: #fbfaf6;
+      --card: #fffefa;
+      --line: #dce5df;
+      --green: #1d5a48;
+      --green-soft: #e8f2eb;
+      --gold: #c18d43;
+      --shadow: 0 18px 50px rgba(24, 53, 47, .09);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(ellipse at 85% 0%, #e8f0e8 0, transparent 34rem), var(--paper);
+      color: var(--ink);
+      font: 16px/1.6 ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    .shell { width: min(1040px, calc(100% - 36px)); margin: 0 auto; padding: 48px 0 64px; }
+    .eyebrow { color: var(--green); font-size: .76rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+    h1 { margin: 8px 0 8px; font: 600 clamp(2rem, 5vw, 3.2rem)/1.1 Georgia, "Times New Roman", serif; letter-spacing: -.035em; }
+    .intro { max-width: 690px; margin: 0; color: var(--muted); }
+    .topline { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin-bottom: 28px; }
+    .desk-mark { display: grid; width: 58px; height: 58px; place-items: center; border: 1px solid #c9d9ce; border-radius: 18px; color: var(--green); background: rgba(255,255,255,.65); font: 700 1.1rem Georgia, serif; }
+    .tabs { display: flex; gap: 8px; overflow-x: auto; padding: 7px; margin: 28px 0 0; border: 1px solid var(--line); border-radius: 16px; background: rgba(255,255,255,.7); scrollbar-width: thin; }
+    .tab {
+      flex: 0 0 auto; border: 0; border-radius: 11px; padding: 11px 16px; background: transparent;
+      color: #52665f; font: inherit; font-size: .92rem; font-weight: 700; cursor: pointer; transition: .16s ease;
+    }
+    .tab:hover { background: #f1f5f0; color: var(--ink); }
+    .tab[aria-selected="true"] { color: white; background: var(--green); box-shadow: 0 5px 15px rgba(29,90,72,.18); }
+    .tab:focus-visible { outline: 3px solid #d6a75d; outline-offset: 2px; }
+    .panel { margin-top: 18px; padding: clamp(22px, 4vw, 42px); border: 1px solid var(--line); border-radius: 22px; background: var(--card); box-shadow: var(--shadow); }
+    .panel[hidden] { display: none; }
+    .ticket-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; padding-bottom: 22px; border-bottom: 1px solid var(--line); }
+    .ticket-id { color: var(--green); font-size: .76rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+    h2 { margin: 3px 0 3px; font: 600 clamp(1.55rem, 3.5vw, 2.1rem)/1.2 Georgia, "Times New Roman", serif; }
+    .subject { margin: 0; color: var(--muted); }
+    .status { flex: 0 0 auto; padding: 5px 10px; border: 1px solid #e2c58e; border-radius: 999px; color: #765722; background: #fff8e8; font-size: .76rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+    .status.resolved { border-color: #cce0cd; color: #4d7956; background: #edf6ec; }
+    .ticket-summary { display: flex; flex-wrap: wrap; gap: 9px; padding: 18px 0 6px; }
+    .fact { padding: 6px 10px; border: 1px solid #e5eae4; border-radius: 9px; color: #50635c; background: #f7f8f3; font-size: .83rem; }
+    .section-title { display: flex; align-items: center; gap: 10px; margin: 28px 0 12px; font: 600 1.3rem Georgia, "Times New Roman", serif; }
+    .section-title::before { width: 4px; height: 20px; border-radius: 4px; background: var(--gold); content: ""; }
+    .expected-copy { margin: 0 0 18px; color: #4e625a; }
+    .plan-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 13px; }
+    .plan-card { min-width: 0; padding: 17px 18px; border: 1px solid var(--line); border-radius: 14px; background: #fff; }
+    .plan-card.wide { grid-column: 1 / -1; }
+    .plan-card h3 { margin: 0 0 7px; color: var(--green); font-size: .78rem; letter-spacing: .09em; text-transform: uppercase; }
+    .plan-card p { margin: 0; color: #40564e; }
+    .plan-card ul { margin: 0; padding-left: 1.2rem; color: #40564e; }
+    .plan-card li + li { margin-top: 5px; }
+    code { color: #214d40; font: .87em ui-monospace, SFMono-Regular, Menlo, monospace; overflow-wrap: anywhere; }
+    .note { margin: 17px 0 0; padding: 12px 14px; border-left: 3px solid #86a991; border-radius: 0 9px 9px 0; color: #52665f; background: var(--green-soft); font-size: .88rem; }
+    .actual { margin-top: 28px; padding-top: 5px; }
+    .actual-label { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+    .actual-label .section-title { margin: 0 0 12px; }
+    .actual-label small { color: #809088; }
+    .actual-space { min-height: 142px; border: 1px dashed #b9c8be; border-radius: 13px; background: repeating-linear-gradient(to bottom, transparent 0, transparent 43px, #edf1ed 44px, transparent 45px); }
+    .actual-copy { padding: 16px 18px; border: 1px solid #dce7de; border-radius: 13px; color: #40564e; background: #f8faf6; }
+    .actual-copy p { margin: 0 0 9px; }
+    .actual-copy p:last-child { margin-bottom: 0; }
+    .actual-copy ul { margin: 8px 0 0; padding-left: 1.2rem; }
+    .actual-copy li + li { margin-top: 5px; }
+    .money-table { width: 100%; border-collapse: collapse; margin: 18px 0; font-size: .92rem; }
+    .money-table th, .money-table td { padding: 11px 12px; border-bottom: 1px solid var(--line); text-align: left; }
+    .money-table th { color: var(--green); background: #f4f7f2; font-size: .76rem; letter-spacing: .06em; text-transform: uppercase; }
+    .money-table td:last-child, .money-table th:last-child { text-align: right; font-variant-numeric: tabular-nums; }
+    .cash-total { display: flex; justify-content: space-between; gap: 20px; padding: 14px 16px; border-radius: 12px; color: var(--green); background: var(--green-soft); font-weight: 800; }
+    .reflection-intro { max-width: 820px; margin: 4px 0 22px; color: var(--muted); }
+    .reflection-section { margin-top: 25px; }
+    .reflection-section > h3 { margin: 0 0 10px; color: var(--green); font: 600 1.35rem Georgia, serif; }
+    .reflection-section > p { color: #4e625a; }
+    .reflection-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px; }
+    .reflection-card { min-width: 0; padding: 16px 17px; border: 1px solid var(--line); border-radius: 14px; background: #fff; }
+    .reflection-card h4 { margin: 0 0 8px; color: #315f4a; font-size: 1rem; }
+    .reflection-card p { margin: 7px 0; color: #4e625a; font-size: .9rem; }
+    .reflection-card ul,.reflection-section ul,.reflection-section ol { padding-left: 1.25rem; color: #4e625a; }
+    .reflection-card li,.reflection-section li { margin: 5px 0; }
+    .reflection-table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 13px; }
+    .reflection-table { width: 100%; min-width: 720px; border-collapse: collapse; background: #fff; font-size: .88rem; }
+    .reflection-table th,.reflection-table td { padding: 12px 14px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    .reflection-table th { color: var(--green); background: #f3f7f2; font-size: .75rem; letter-spacing: .06em; text-transform: uppercase; }
+    .reflection-table tr:last-child td { border-bottom: 0; }
+    .reflection-callout { margin: 14px 0; padding: 13px 15px; border-left: 3px solid #d1a558; border-radius: 0 10px 10px 0; color: #6b5838; background: #fff8ea; }
+    .score { display: inline-block; margin: 0 0 6px; padding: 4px 8px; border-radius: 99px; background: #edf4ec; color: #4f7759; font-size: .76rem; font-weight: 800; }
+    @media (max-width: 800px) { .reflection-grid { grid-template-columns: 1fr; } }
+    .later { display: grid; min-height: 250px; place-items: center; text-align: center; }
+    .later-card { max-width: 460px; padding: 28px; border: 1px dashed #c9d8cd; border-radius: 16px; background: #f8faf6; }
+    .later-card strong { display: block; margin-bottom: 5px; color: var(--green); font: 600 1.5rem Georgia, serif; }
+    .later-card p { margin: 0; color: var(--muted); }
+    footer { margin-top: 19px; color: #78877f; font-size: .8rem; text-align: right; }
+    @media (max-width: 650px) {
+      .shell { width: min(100% - 22px, 1040px); padding-top: 29px; }
+      .desk-mark { width: 48px; height: 48px; border-radius: 15px; }
+      .plan-grid { grid-template-columns: 1fr; }
+      .plan-card.wide { grid-column: auto; }
+      .ticket-head { gap: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <div class="topline">
+        <div>
+          <div class="eyebrow">Campus Customs · Desk review</div>
+          <h1>Ticket plans &amp; reflection</h1>
+          <p class="intro">Problem 6 plans, Problem 9 actual agent runs, cash reconciliation, and a reflection on what this app can safely handle.</p>
+        </div>
+        <div class="desk-mark" aria-hidden="true">CC</div>
+      </div>
+    </header>
+
+    <nav class="tabs" role="tablist" aria-label="Desk sections">
+      <button class="tab" id="tab-101" role="tab" aria-selected="true" aria-controls="panel-101" tabindex="0">Ticket 101</button>
+      <button class="tab" id="tab-102" role="tab" aria-selected="false" aria-controls="panel-102" tabindex="-1">Ticket 102</button>
+      <button class="tab" id="tab-103" role="tab" aria-selected="false" aria-controls="panel-103" tabindex="-1">Ticket 103</button>
+      <button class="tab" id="tab-cash" role="tab" aria-selected="false" aria-controls="panel-cash" tabindex="-1">Cash</button>
+      <button class="tab" id="tab-reflection" role="tab" aria-selected="false" aria-controls="panel-reflection" tabindex="-1">Reflection</button>
+    </nav>
+
+    <section class="panel" id="panel-101" role="tabpanel" aria-labelledby="tab-101" tabindex="0">
+      <div class="ticket-head">
+        <div><div class="ticket-id">Resolved workflow · ticket 101</div><h2>Bulldog tee</h2><p class="subject">Tauhid Zaman needs one white tee in size S.</p></div>
+        <span class="status resolved">Resolved</span>
+      </div>
+      <div class="ticket-summary"><span class="fact">SKU · CC-TEE-WHITE</span><span class="fact">Requested · 1 × S</span><span class="fact">Recorded stock · 0 in S</span><span class="fact">Linked invoice · 501</span></div>
+      <h3 class="section-title">Expected</h3>
+      <p class="expected-copy">My first call is to the Inventory agent, because we need to confirm the exact size-S shortage before asking anyone to wait or suggesting another option. If the linked reprint needs follow-up, I expect the Boss to consult Accounting next. I would only have a person contact Bulldog Print Co after checking that invoice 501 is the relevant reprint record; I would not promise the customer stock or an arrival date.</p>
+      <div class="plan-grid">
+        <article class="plan-card"><h3>Delegation order</h3><ol><li><strong>Inventory:</strong> confirm the requested size and on-hand quantity.</li><li><strong>Accounting, if needed:</strong> verify invoice 501, due date, and vendor context before any human follow-up.</li><li><strong>Customer Service, if a reply is needed:</strong> prepare customer-safe wording from confirmed facts.</li></ol></article>
+        <article class="plan-card"><h3>Expected MCP tools</h3><ul><li><code>lookup_inventory(sku="CC-TEE-WHITE", size="S")</code></li><li><code>resolve_ticket_101_bulldog_tee()</code></li><li>If invoice details need checking: <code>get_invoice_context(invoice_id=501)</code></li><li>If drafting a customer-safe update: <code>get_customer_order_context(ticket_id=101)</code></li></ul></article>
+      </div>
+      <p class="note">“Call” here means the Boss’s planned first consultation/delegation. The agents only read records; a human would make any external call.</p>
+      <div class="actual"><div class="actual-label"><h3 class="section-title">Actual</h3><small>Run 263b9e6b · local mock · 2026-10-12</small></div><div class="actual-copy"><p><strong>Outcome:</strong> Agent workflow completed and the database ticket status is <strong>resolved</strong>. This closes the review workflow; the customer order is not fulfilled yet.</p><ul><li><strong>Boss:</strong> coordinated Inventory and Accounting, then returned an evidence-based recommendation; no external contact or inventory change was made.</li><li><strong>Inventory:</strong> confirmed <code>CC-TEE-WHITE / S</code> has 0 units at Aisle B.</li><li><strong>Accounting:</strong> found linked invoice 501 for $840, open and due 2026-08-28; the linked vendor is Bulldog Print Co, with a recorded 5-day lead time.</li></ul><p><strong>Approval/action:</strong> none recorded. No stock commitment or invoice payment was authorized by this run. Human follow-up is still needed to confirm the reprint and customer timing.</p></div></div>
+    </section>
+
+    <section class="panel" id="panel-102" role="tabpanel" aria-labelledby="tab-102" tabindex="0" hidden>
+      <div class="ticket-head">
+        <div><div class="ticket-id">Resolved workflow · ticket 102</div><h2>Rent due</h2><p class="subject">Elm City Properties emailed that shop rent is due in two days.</p></div>
+        <span class="status resolved">Resolved</span>
+      </div>
+      <div class="ticket-summary"><span class="fact">Lease · 1</span><span class="fact">Monthly rent · $2,400</span><span class="fact">Next due · 2026-09-02</span><span class="fact">Cash snapshot · $3,400 on 2026-08-31</span></div>
+      <h3 class="section-title">Expected</h3>
+      <p class="expected-copy">My first call is to the Facilities agent, because it should compare the email with lease 1 and confirm the recorded due date before I treat the notice as complete. I expect Accounting to check the dated cash snapshot and payment rows next. I would ask a human to contact Elm City Properties only if the lease and notice still leave a question; a balance snapshot alone is not payment approval.</p>
+      <div class="plan-grid">
+        <article class="plan-card"><h3>Delegation order</h3><ol><li><strong>Facilities:</strong> verify the landlord, monthly rent, due date, and what the lease actually records.</li><li><strong>Accounting:</strong> report the cash snapshot date and any recorded payment rows; do not infer a rent payment from unrelated references.</li></ol></article>
+        <article class="plan-card"><h3>Expected MCP tools</h3><ul><li><code>resolve_ticket_102_rent_notice()</code></li><li>If the lease needs a focused reread: <code>get_lease_context(lease_id=1)</code></li></ul></article>
+      </div>
+      <p class="note">No payment action should be taken from this plan. The tools are read-only, and the database does not declare a payment-to-lease link.</p>
+      <div class="actual"><div class="actual-label"><h3 class="section-title">Actual</h3><small>Run 71cdfef8 · local mock · 2026-10-12</small></div><div class="actual-copy"><p><strong>Outcome:</strong> Agent workflow completed and the database ticket status is <strong>resolved</strong>. The rent notice and lease details agree; the rent has not been paid.</p><ul><li><strong>Boss:</strong> coordinated Facilities and Accounting and surfaced the payment decision for a human.</li><li><strong>Facilities:</strong> verified lease 1 for Chapel Street, monthly rent $2,400, due 2026-09-02 to Elm City Properties.</li><li><strong>Accounting:</strong> checked the $3,400 checking snapshot dated 2026-08-31 and found zero payment rows.</li></ul><p><strong>Approval/action:</strong> no rent payment approval was recorded, so checking remains unchanged. A human must authorize payment and reconcile the payment reference before recording it.</p></div></div>
+    </section>
+
+    <section class="panel" id="panel-103" role="tabpanel" aria-labelledby="tab-103" tabindex="0" hidden>
+      <div class="ticket-head">
+        <div><div class="ticket-id">Resolved workflow · ticket 103</div><h2>Bulk hoodie discount</h2><p class="subject">Yale AI Club asks for 20 navy hoodies, size M, and a bulk discount.</p></div>
+        <span class="status resolved">Resolved</span>
+      </div>
+      <div class="ticket-summary"><span class="fact">SKU · CC-HOOD-NAVY</span><span class="fact">Requested · 20 × M</span><span class="fact">Recorded stock · 8 in M</span><span class="fact">Discount policy · not in these records</span></div>
+      <h3 class="section-title">Expected</h3>
+      <p class="expected-copy">My first call is to the Inventory agent, because the main immediate gap is that the recorded size-M quantity is below the club’s request. I expect Accounting to confirm the recorded list price only if price context is needed, then Customer Service to prepare a careful reply that does not promise a discount, a restock, or a delivery date. Since the database does not contain a discount rule, the Boss should leave that decision for a human.</p>
+      <div class="plan-grid">
+        <article class="plan-card"><h3>Delegation order</h3><ol><li><strong>Inventory:</strong> compare the size-M stock with the requested quantity.</li><li><strong>Accounting, if price review is requested:</strong> retrieve recorded SKU pricing; keep internal unit cost out of customer wording.</li><li><strong>Customer Service:</strong> assemble a customer-safe response from stock and list-price facts only.</li></ol></article>
+        <article class="plan-card"><h3>Expected MCP tools</h3><ul><li><code>lookup_inventory(sku="CC-HOOD-NAVY", size="M")</code></li><li><code>resolve_ticket_103_bulk_hoodie_request()</code></li><li>For internal price review: <code>lookup_product_pricing(sku="CC-HOOD-NAVY")</code></li><li>For safe customer context: <code>get_customer_order_context(ticket_id=103)</code></li></ul></article>
+      </div>
+      <p class="note">I expect the response to state the stock gap plainly and route any discount or fulfillment commitment for human approval.</p>
+      <div class="actual"><div class="actual-label"><h3 class="section-title">Actual</h3><small>Run 4a8c3ac9 · local mock · 2026-10-12</small></div><div class="actual-copy"><p><strong>Outcome:</strong> Agent workflow completed and the database ticket status is <strong>resolved</strong>. The requested 20-unit order and bulk discount are not approved or fulfilled.</p><ul><li><strong>Boss:</strong> coordinated Inventory, Accounting, and Customer Service; flagged the stock gap and policy decision for human review.</li><li><strong>Inventory:</strong> confirmed 8 size-M navy hoodies in Aisle A, 12 fewer than requested.</li><li><strong>Accounting:</strong> retrieved the recorded list price of $58 per hoodie. The internal unit cost is not included in customer-facing evidence.</li><li><strong>Customer Service:</strong> checked customer-safe order context; no customer message was sent.</li></ul><p><strong>Approval/action:</strong> none recorded. No discount rule, replenishment commitment, or purchase authorization exists in the database.</p></div></div>
+    </section>
+
+    <section class="panel" id="panel-cash" role="tabpanel" aria-labelledby="tab-cash" tabindex="0" hidden>
+      <div class="ticket-head"><div><div class="ticket-id">Checking ledger · initial state restored before runs</div><h2>Cash movement</h2><p class="subject">All amounts below are actual database changes made during Problem 9.</p></div><span class="status">No outflow</span></div>
+      <div class="ticket-summary"><span class="fact">Starting checking · $3,400.00</span><span class="fact">Snapshot date · 2026-08-31</span><span class="fact">Recorded approvals · 0</span></div>
+      <table class="money-table"><thead><tr><th>Step</th><th>Cash movement</th><th>Change</th><th>Checking balance</th></tr></thead><tbody>
+        <tr><td>Clean initial state</td><td>Starting balance</td><td>$0.00</td><td>$3,400.00</td></tr>
+        <tr><td>Ticket 101 · Bulldog tee</td><td>No payment or purchase approved</td><td>$0.00</td><td>$3,400.00</td></tr>
+        <tr><td>Ticket 102 · Rent due</td><td>$2,400 rent identified; no payment approval recorded</td><td>$0.00</td><td>$3,400.00</td></tr>
+        <tr><td>Ticket 103 · Hoodie discount</td><td>No purchase or discount approved</td><td>$0.00</td><td>$3,400.00</td></tr>
+      </tbody></table>
+      <div class="cash-total"><span>Ending checking balance (cash_accounts)</span><span>$3,400.00</span></div>
+      <p class="note">The agent tools are read-only. The rent amount and invoice amount are obligations/context, not recorded payments. The agents requested human review; no cash approval was submitted, so the payments table remains empty.</p>
+    </section>
+    <section class="panel" id="panel-reflection" role="tabpanel" aria-labelledby="tab-reflection" tabindex="0" hidden>
+      <div class="ticket-head"><div><div class="ticket-id">Problem 10 · Post-run analysis</div><h2>What the team did well—and what it could not do</h2><p class="subject">A review grounded in our agent app, the three Problem 9 run records, and the Campus Customs database.</p></div><span class="status resolved">3 runs reviewed</span></div>
+      <p class="reflection-intro">I evaluated the workflow state separately from the real-world outcome. The API marked each ticket resolved when the Boss returned a validated response; that status means the agent review finished. It does not mean a tee was delivered, rent was paid, or a discount/order was approved. All three runs used the local PydanticAI FunctionModel and database-backed MCP server, so no Portkey credits were used.</p>
+
+      <section class="reflection-section"><h3>1. Agent performance on each ticket</h3>
+        <div class="reflection-grid">
+          <article class="reflection-card"><span class="score">Ticket 101 · Good triage, incomplete fulfillment</span><h4>Bulldog tee stockout</h4><p>The Boss followed the Problem 6 plan closely: it delegated first to Inventory, then Accounting. Inventory confirmed zero <code>CC-TEE-WHITE</code> size-S units; Accounting surfaced invoice 501 ($840, open, due 2026-08-28) and Bulldog Print Co’s recorded five-day lead time.</p><p><strong>Why that was useful:</strong> The team found both the immediate blocker and a plausible linked reprint record without telling Tauhid that stock or a delivery date was guaranteed.</p><p><strong>What fell short:</strong> The agents could not verify that the invoice represents a currently active production order, contact the vendor, reserve a tee, or update inventory. The Boss’s returned summary was generic, so the evidence carried the useful detail, not the prose recommendation.</p></article>
+          <article class="reflection-card"><span class="score">Ticket 102 · Strongest plan-to-run match</span><h4>Rent due</h4><p>The Boss delegated to Facilities first and Accounting next, exactly as expected. Facilities checked lease 1: $2,400 monthly rent due 2026-09-02 to Elm City Properties, which matches the email’s “in two days” against desk date 2026-08-31. Accounting found a $3,400 checking snapshot and no payment rows.</p><p><strong>Why that was useful:</strong> It corroborated the notice and checked whether there was a recorded payment before taking another step.</p><p><strong>What fell short:</strong> No payment was authorized or recorded, and the account snapshot alone does not confirm that funds are still available in an external bank. A human must authorize and reconcile any rent payment.</p></article>
+          <article class="reflection-card"><span class="score">Ticket 103 · Correct delegation, decision intentionally held</span><h4>Bulk hoodie discount</h4><p>The Boss consulted Inventory, Accounting, and Customer Service, matching the planned sequence. Inventory found 8 size-M hoodies for a request of 20 (a shortage of 12). Accounting retrieved the $58 list price. Customer Service used its restricted, customer-safe order context.</p><p><strong>Why that was useful:</strong> The team stated the shortage and price evidence without exposing internal unit cost to customer-facing context or inventing a discount rule.</p><p><strong>What fell short:</strong> It did not produce a concrete discount recommendation, create a purchase order for the missing 12, or send a customer response. Those actions need policy, purchasing, and communication support.</p></article>
+        </div>
+        <div class="reflection-callout"><strong>Evaluation caveat:</strong> The local mock correctly exercised Boss delegation, role-filtered MCP access, database evidence, validated replies, and append-only graph events. But the mock currently returns nearly identical generic summaries and recommendations for every role. Thus, strong evidence gathering and correct delegation are visible; nuanced reasoning quality is not demonstrated by these local-mock outputs.</div>
+      </section>
+
+      <section class="reflection-section"><h3>2. Expected plan compared with actual run</h3>
+        <div class="reflection-table-wrap"><table class="reflection-table"><thead><tr><th>Ticket</th><th>Expected in Problem 6</th><th>Actual in Problem 9</th><th>Assessment</th></tr></thead><tbody>
+          <tr><td><strong>101</strong></td><td>Inventory first for the exact size/SKU; Accounting if invoice 501 needed review; a person—not an agent—would call the vendor or customer.</td><td>Boss delegated to Inventory and Accounting. The recorded result established 0 size-S units and the linked open $840 reprint invoice/vendor lead time. No external call, payment, stock update, or customer promise occurred.</td><td>Delegation and safety matched the plan. Fulfillment remains open in the real world because there is no vendor-contact or receiving workflow.</td></tr>
+          <tr><td><strong>102</strong></td><td>Facilities first to compare the notice with lease 1; Accounting next for cash date and payments; no payment from a balance snapshot alone.</td><td>Boss delegated to Facilities and Accounting. The due date matched the two-day notice; checking was $3,400 and payments were empty. No outflow was recorded.</td><td>Closest match to the expected sequence. It verified facts while preserving the planned approval boundary.</td></tr>
+          <tr><td><strong>103</strong></td><td>Inventory first; Accounting for list price if needed; Customer Service for safe wording; human review for discount and fulfillment.</td><td>Boss delegated to Inventory, Accounting, and Customer Service. Evidence showed 8/20 units, $58 list price, no discount rule, and customer-safe context; no message or order was sent.</td><td>Delegation matched the plan and correctly withheld a commitment. The response drafting and purchase decision remain outside current tools.</td></tr>
+        </tbody></table></div>
+        <p>The plans named specific MCP tools, but the audit record for these runs stores graph role, node, usage, and run IDs while the <code>tool_name</code> field is null. I therefore compare expected tool use with the returned database evidence and agent-role sequence; the audit file alone cannot prove each individual MCP call by name. Logging those call names would make future plan-versus-actual reviews more precise.</p>
+      </section>
+
+      <section class="reflection-section"><h3>3. What would be simpler with a single agent and tools?</h3>
+        <p>These are three fixed, narrow requests against a small database. One ticket-aware agent with a read-only toolset could select the relevant combined lookup, gather the result, and return a structured response. That would remove the Boss-to-specialist handoffs, repeated prompt/model cycles, duplicated generic summaries, and some audit volume. It would also simplify testing: one run per ticket and one response schema to inspect. That is especially attractive in local mock mode, where all role outputs currently use the same generic template.</p>
+        <p>The tradeoff is access control and independent review. The five-role setup gives Customer Service a narrower view than Accounting and creates a clear Facilities/Inventory specialty boundary. If one agent received every tool, it would be easier to expose internal cost or payment context to a customer-facing answer, and there would be less role-level accountability. A practical middle ground is one orchestrator with specialist tool permissions or explicit, small workflows, rather than asking every agent to weigh in on every ticket.</p>
+      </section>
+
+      <section class="reflection-section"><h3>4. Three new problems the current team and tools can handle</h3>
+        <ol>
+          <li><strong>Check a different recorded item/size before answering a stock question.</strong> Inventory can query an existing SKU and size through <code>lookup_inventory(sku, size)</code>; Customer Service can use the customer-safe order context when the request is attached to a supported ticket. The result is recorded on-hand stock, not a reservation or delivery promise.</li>
+          <li><strong>Review the status and vendor context for invoice 501.</strong> Accounting can use <code>get_invoice_context(invoice_id=501)</code> to retrieve the invoice, vendor, cash snapshot, and payment rows and report that the record is open/overdue. It can recommend a human reconciliation; it cannot pay the vendor or mark the invoice paid.</li>
+          <li><strong>Check whether a rent notice agrees with the recorded lease.</strong> Facilities and Accounting can use <code>get_lease_context(lease_id=1)</code> to compare the lease due date and rent with the cash snapshot and recorded payments. This is a useful verification workflow, while an actual payment still requires a human decision.</li>
+        </ol>
+      </section>
+
+      <section class="reflection-section"><h3>5. Three problems the current setup cannot solve</h3>
+        <div class="reflection-grid">
+          <article class="reflection-card"><h4>Place or receive a replenishment order</h4><p>For ticket 101 or 103, the app can report stock and vendor facts but cannot confirm production, obtain a quote, place a purchase order, track shipment, or increase inventory on receipt.</p><p><strong>Add:</strong> a Procurement/Receiving agent; vendor catalog and purchase-order tools; shipment tracking; a receiving and inventory-adjustment tool with approval, idempotency, and audit controls.</p></article>
+          <article class="reflection-card"><h4>Send and track customer or vendor communications</h4><p>The Customer Service role can inspect safe records but there is no CRM, order-management, email, or messaging integration. It cannot send a tailored availability update or follow up about the reprint.</p><p><strong>Add:</strong> a Customer Operations agent plus customer/order lookup and message-drafting tools. Sending should require an explicit human review/approval and record delivery status.</p></article>
+          <article class="reflection-card"><h4>Execute and reconcile real payments or discounts</h4><p><code>POST /approvals</code> changes the local cash ledger and appends a payment row; it does not move bank funds, mark an invoice/lease paid, reconcile identifiers, or apply a discount policy. A $3,400 snapshot is not bank authorization.</p><p><strong>Add:</strong> a Finance/Payments agent, a payment-provider/AP integration, a formal invoice-to-payment reconciliation model, and a versioned discount-policy/approval tool. Require a named human approver before any financial commit.</p></article>
+        </div>
+      </section>
+
+      <section class="reflection-section"><h3>6. Overall assessment and next improvements</h3>
+        <p>The team demonstrated useful, grounded triage: it fetched relevant rows, delegated the specialties anticipated in the desk plans, respected the customer-safe data boundary, and left financial/policy decisions unapproved. The three workflow statuses and append-only audit entries make the run visible in the dashboard. The cash ledger stayed at $3,400 because no approval was submitted.</p>
+        <ul><li>Improve the local mock so each role’s final summary and recommendation reflect its returned records rather than the same generic text.</li><li>Record actual MCP tool names and run correlation IDs in each audit graph step so tool usage can be compared directly with the Problem 6 plans.</li><li>Separate “review completed” from “business issue fulfilled” in ticket status; current backend marks a ticket resolved whenever the agent run succeeds, even when the order, rent, or discount decision still needs a human.</li><li>Add approved, narrowly scoped write tools only after a human-reviewed workflow exists for purchases, invoice reconciliation, customer messages, and stock receipt.</li></ul>
+      </section>
+    </section>
+    <footer>Agent workflow states and ledger amounts reflect the Problem 9 run and current database.</footer>
+  </main>
+  <script>
+    const tabs = [...document.querySelectorAll('[role="tab"]')];
+    const panels = [...document.querySelectorAll('[role="tabpanel"]')];
+    function activate(tab, moveFocus = false) {
+      tabs.forEach(item => {
+        const selected = item === tab;
+        item.setAttribute('aria-selected', String(selected));
+        item.tabIndex = selected ? 0 : -1;
+      });
+      panels.forEach(panel => { panel.hidden = panel.id !== tab.getAttribute('aria-controls'); });
+      if (moveFocus) tab.focus();
+    }
+    tabs.forEach((tab, index) => {
+      tab.addEventListener('click', () => activate(tab));
+      tab.addEventListener('keydown', event => {
+        let next = index;
+        if (event.key === 'ArrowRight') next = (index + 1) % tabs.length;
+        else if (event.key === 'ArrowLeft') next = (index - 1 + tabs.length) % tabs.length;
+        else if (event.key === 'Home') next = 0;
+        else if (event.key === 'End') next = tabs.length - 1;
+        else return;
+        event.preventDefault();
+        activate(tabs[next], true);
+      });
+    });
+  </script>
+</body>
+</html>

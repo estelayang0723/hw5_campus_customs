@@ -1,0 +1,330 @@
+{
+  "problem": 9,
+  "database": {
+    "working_file": "data/campus_customs_new.db",
+    "reset_from": "data/campus_customs.db",
+    "reset_before_runs": true,
+    "initial_ticket_statuses": {
+      "101": "open",
+      "102": "open",
+      "103": "open"
+    },
+    "starting_checking_balance": 3400.0,
+    "starting_balance_date": "2026-08-31"
+  },
+  "runs_completed_in_order": [
+    101,
+    102,
+    103
+  ],
+  "tickets": [
+    {
+      "ticket_id": 101,
+      "ticket": {
+        "id": 101,
+        "type": "customer_order",
+        "requester": "Tauhid Zaman",
+        "subject": "Bulldog tee",
+        "sku": "CC-TEE-WHITE",
+        "size": "S",
+        "qty": 1,
+        "lease_id": null,
+        "invoice_id": 501,
+        "status": "resolved",
+        "notes": "Needs a tee in size S.",
+        "created_at": "2026-08-31T09:15:00-04:00"
+      },
+      "run": {
+        "run_id": "263b9e6b-0132-4ee1-ba60-e0327dd57c8b",
+        "started_at": "2026-10-12T18:32:44.714989Z",
+        "mode": "local_mock",
+        "model": "gpt-6-luna",
+        "status": "completed"
+      },
+      "workflow_status": "resolved",
+      "outcome": {
+        "summary": "Local mock reviewed read-only database results; see the cited table fields below.",
+        "recommendation": "A human should verify the cited records and approve any customer commitment, payment, or policy decision.",
+        "human_approval_needed": true,
+        "agent_workflow": "completed; backend marked ticket resolved",
+        "operational_resolution": "review complete; any payment, purchase, customer commitment, stock replenishment, or policy decision remains subject to explicit human approval"
+      },
+      "agent_contributions": [
+        {
+          "role": "inventory",
+          "contribution": "Confirmed the requested CC-TEE-WHITE size S has 0 recorded units at Aisle B."
+        },
+        {
+          "role": "accounting",
+          "contribution": "Reviewed open invoice 501 for $840, due 2026-08-28, and linked vendor Bulldog Print Co with a recorded 5-day lead time."
+        },
+        {
+          "role": "boss",
+          "contribution": "Coordinated Inventory and Accounting and returned an evidence-based recommendation; no external action was taken."
+        }
+      ],
+      "agent_runs": [
+        {
+          "role": "boss",
+          "completed": true,
+          "steps": 8,
+          "usage": {
+            "requests": 7,
+            "tool_calls": 4,
+            "input_tokens": 848,
+            "output_tokens": 365
+          }
+        },
+        {
+          "role": "inventory",
+          "completed": true,
+          "steps": 6,
+          "usage": {
+            "requests": 3,
+            "tool_calls": 1,
+            "input_tokens": 233,
+            "output_tokens": 100
+          }
+        },
+        {
+          "role": "accounting",
+          "completed": true,
+          "steps": 6,
+          "usage": {
+            "requests": 6,
+            "tool_calls": 3,
+            "input_tokens": 607,
+            "output_tokens": 222
+          }
+        }
+      ],
+      "approvals": [],
+      "cash_change": 0.0
+    },
+    {
+      "ticket_id": 102,
+      "ticket": {
+        "id": 102,
+        "type": "rent_notice",
+        "requester": "Elm City Properties",
+        "subject": "Rent due",
+        "sku": null,
+        "size": null,
+        "qty": null,
+        "lease_id": 1,
+        "invoice_id": null,
+        "status": "resolved",
+        "notes": "Email: shop rent due in 2 days.",
+        "created_at": "2026-08-31T11:05:00-04:00"
+      },
+      "run": {
+        "run_id": "71cdfef8-117c-4684-baff-6ad0b646a216",
+        "started_at": "2026-10-12T18:32:44.963262Z",
+        "mode": "local_mock",
+        "model": "gpt-6-luna",
+        "status": "completed"
+      },
+      "workflow_status": "resolved",
+      "outcome": {
+        "summary": "Local mock reviewed read-only database results; see the cited table fields below.",
+        "recommendation": "A human should verify the cited records and approve any customer commitment, payment, or policy decision.",
+        "human_approval_needed": true,
+        "agent_workflow": "completed; backend marked ticket resolved",
+        "operational_resolution": "review complete; any payment, purchase, customer commitment, stock replenishment, or policy decision remains subject to explicit human approval"
+      },
+      "agent_contributions": [
+        {
+          "role": "facilities",
+          "contribution": "Verified lease 1 for Chapel Street, monthly rent $2,400, due 2026-09-02, landlord Elm City Properties."
+        },
+        {
+          "role": "accounting",
+          "contribution": "Checked checking balance $3,400 dated 2026-08-31 and found no payment rows."
+        },
+        {
+          "role": "boss",
+          "contribution": "Coordinated Facilities and Accounting; surfaced rent payment for human approval without recording a payment."
+        }
+      ],
+      "agent_runs": [
+        {
+          "role": "boss",
+          "completed": true,
+          "steps": 8,
+          "usage": {
+            "requests": 7,
+            "tool_calls": 4,
+            "input_tokens": 940,
+            "output_tokens": 367
+          }
+        },
+        {
+          "role": "facilities",
+          "completed": true,
+          "steps": 6,
+          "usage": {
+            "requests": 3,
+            "tool_calls": 1,
+            "input_tokens": 302,
+            "output_tokens": 104
+          }
+        },
+        {
+          "role": "accounting",
+          "completed": true,
+          "steps": 6,
+          "usage": {
+            "requests": 6,
+            "tool_calls": 3,
+            "input_tokens": 686,
+            "output_tokens": 225
+          }
+        }
+      ],
+      "approvals": [],
+      "cash_change": 0.0
+    },
+    {
+      "ticket_id": 103,
+      "ticket": {
+        "id": 103,
+        "type": "price_override",
+        "requester": "Yale AI Club",
+        "subject": "Bulk hoodie discount",
+        "sku": "CC-HOOD-NAVY",
+        "size": "M",
+        "qty": 20,
+        "lease_id": null,
+        "invoice_id": null,
+        "status": "resolved",
+        "notes": "Student org wants 20 hoodies, size M, asking for a bulk discount.",
+        "created_at": "2026-08-31T16:55:00-04:00"
+      },
+      "run": {
+        "run_id": "4a8c3ac9-a87a-45e8-b553-00ec4788d87f",
+        "started_at": "2026-10-12T18:32:45.216444Z",
+        "mode": "local_mock",
+        "model": "gpt-6-luna",
+        "status": "completed"
+      },
+      "workflow_status": "resolved",
+      "outcome": {
+        "summary": "Local mock reviewed read-only database results; see the cited table fields below.",
+        "recommendation": "A human should verify the cited records and approve any customer commitment, payment, or policy decision.",
+        "human_approval_needed": true,
+        "agent_workflow": "completed; backend marked ticket resolved",
+        "operational_resolution": "review complete; any payment, purchase, customer commitment, stock replenishment, or policy decision remains subject to explicit human approval"
+      },
+      "agent_contributions": [
+        {
+          "role": "inventory",
+          "contribution": "Confirmed 8 units of CC-HOOD-NAVY size M at Aisle A against a request for 20 (short by 12)."
+        },
+        {
+          "role": "accounting",
+          "contribution": "Retrieved the recorded list price of $58 per unit. Internal unit cost was not included in customer-safe evidence."
+        },
+        {
+          "role": "customer_service",
+          "contribution": "Reviewed customer-safe order context; no customer message was sent."
+        },
+        {
+          "role": "boss",
+          "contribution": "Coordinated specialists and left discount and fulfillment commitments for a human decision."
+        }
+      ],
+      "agent_runs": [
+        {
+          "role": "boss",
+          "completed": true,
+          "steps": 10,
+          "usage": {
+            "requests": 10,
+            "tool_calls": 6,
+            "input_tokens": 1386,
+            "output_tokens": 539
+          }
+        },
+        {
+          "role": "inventory",
+          "completed": true,
+          "steps": 6,
+          "usage": {
+            "requests": 3,
+            "tool_calls": 1,
+            "input_tokens": 234,
+            "output_tokens": 100
+          }
+        },
+        {
+          "role": "accounting",
+          "completed": true,
+          "steps": 6,
+          "usage": {
+            "requests": 6,
+            "tool_calls": 3,
+            "input_tokens": 601,
+            "output_tokens": 226
+          }
+        },
+        {
+          "role": "customer_service",
+          "completed": true,
+          "steps": 6,
+          "usage": {
+            "requests": 9,
+            "tool_calls": 5,
+            "input_tokens": 1054,
+            "output_tokens": 374
+          }
+        }
+      ],
+      "approvals": [],
+      "cash_change": 0.0
+    }
+  ],
+  "approvals": [],
+  "money_flow": [
+    {
+      "step": "starting_balance",
+      "ticket_id": null,
+      "change": 0.0,
+      "balance": 3400.0
+    },
+    {
+      "step": "ticket_101",
+      "ticket_id": 101,
+      "change": 0.0,
+      "balance": 3400.0,
+      "reason": "No payment or purchase was approved."
+    },
+    {
+      "step": "ticket_102",
+      "ticket_id": 102,
+      "change": 0.0,
+      "balance": 3400.0,
+      "reason": "The $2,400 rent obligation was identified, but no human payment approval was recorded."
+    },
+    {
+      "step": "ticket_103",
+      "ticket_id": 103,
+      "change": 0.0,
+      "balance": 3400.0,
+      "reason": "No purchase or discount was approved."
+    },
+    {
+      "step": "ending_balance",
+      "ticket_id": null,
+      "change": 0.0,
+      "balance": 3400.0,
+      "source": "cash_accounts"
+    }
+  ],
+  "ending_checking_balance": 3400.0,
+  "ending_balance_source": "cash_accounts.balance",
+  "notes": [
+    "All three agent workflows completed and the database ticket statuses are resolved.",
+    "Agent completion does not itself fulfill the tee order, pay rent, replenish hoodies, or approve a discount. No payment/purchase was submitted because agent results require human approval.",
+    "The audit trail is append-only and contains the three run IDs and per-agent graph events."
+  ]
+}

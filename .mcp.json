@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "campus-customs": {
+      "command": "/Users/estelayang/AI foundation/HW 5/.venv/bin/python",
+      "args": [
+        "/Users/estelayang/AI foundation/HW 5/mcp_server/server.py"
+      ]
+    }
+  }
+}
